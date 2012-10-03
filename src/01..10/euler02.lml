@@ -1,0 +1,17 @@
+module EvenFib = struct
+	
+	val private loop : int * int * int * bool * bool * int -> int
+	let loop limit fib1 fib2 even1 even2 acc =
+	    if fib2 < limit then
+	        let acc = if even2 then acc + fib2 else acc in
+	        loop limit fib2 (fib1 + fib2) even2 (even1 = even2) acc
+	    else
+	        acc
+	
+	val main : unit -> unit
+	let main () =
+	    let sum = loop (4 * 1000 * 1000) 1 2 false true 0 in
+	    Print.int sum;
+        Print.newline ()
+
+end

@@ -1,0 +1,24 @@
+module FizzBuzz = struct
+	
+	(*
+	 * Not using % just because
+	 *)
+	val private loop : int * int * int * int * int -> int
+	let loop i n acc n3 n5 = 
+		if i < n then
+		    let nn3 = if i = n3 then n3 + 3 else n3 in
+			let nn5 = if i = n5 then n5 + 5 else n5 in
+			if i = n3 || i = n5 then
+			    loop (i + 1) n (acc + i) nn3 nn5
+			else
+			    loop (i + 1) n acc nn3 nn5
+		else
+		    acc
+	
+	val main : unit -> unit
+	let main () =
+	    let sum = loop 1 1000 0 3 5 in
+	    Print.int sum;
+        Print.newline ()
+
+end
