@@ -1,0 +1,18 @@
+
+
+module Main = struct
+
+    val print_prime : int * unit -> unit
+    let print_prime p () =
+        Print.int p; Print.newline ()
+    
+    val sum_prime : int * int -> int
+    let sum_prime p sum =
+        p + sum
+    
+    val main : unit -> unit
+    let main () =
+        let () = Primes.primes_fold 10000 print_prime () in
+        let sum = Primes.primes_fold 10000 sum_prime 0 in
+        Print.string " --->>> "; Print.int sum; Print.newline ()
+end

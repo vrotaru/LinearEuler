@@ -1,0 +1,57 @@
+module Buffer = struct
+    
+    type 'a t = 
+        { buf: 'a Array.t
+        ; last: int
+        ; size: int 
+        ; init: int -> 'a
+        ; drop: 'a -> unit }
+    
+    val make : (int -> 'a) * ('a -> unit) * int -> 'a t
+    let make init drop size =
+        let buf = Array.init size init in
+        let last = 0 in
+        { ~buf; ~last; ~size; ~init; ~drop }
+    
+    val release : 'a t -> unit
+    let release t =
+        let { t; ~buf; ~drop } = t in
+        let _ = Array.release drop buf in
+        free t
+    
+    val swap : 'a t * int * 'a -> 'a t * 'a
+    let swap t i item =
+        let { t; ~buf } = t in
+        let buf, r = Array.swap buf i item in 
+        { t with ~buf }, r
+    
+    val add : 'a t * 'a -> 'a t
+    let add t item = 
+        let { t; ~buf; ~last; ~drop } = grow t in
+        let buf, old = Array.swap buf last item in
+        let _ = drop old in
+        let last = last + 1 in
+        { t with ~buf; ~last; ~drop }
+            
+    val private grow : 'a t -> 'a t
+    let grow t =
+        let { t; ~buf; ~last; ~size; ~init; ~drop } = t in
+        if last < size then
+            { t with ~buf; ~last; ~size; ~init; ~drop }
+        else
+            let buf2 = Array.init (size * 2) init in
+            let buf, buf2, item = copy buf buf2 (init 0) 0 size in
+            let _, _ = Array.release drop buf, drop item in
+            { t with buf = buf2; ~last; ~size; ~init; ~drop } 
+    
+    val private copy : 'a Array.t * 'a Array.t * 'a * int * int -> 'a Array.t * 'a Array.t * 'a
+    let copy source target item i n =
+        if i < n then
+            let source, v = Array.swap source i item in 
+            let target, item = Array.swap target i v in
+            copy source target item (i + 1) n
+        else
+            source, target, item
+
+end
+

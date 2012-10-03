@@ -1,0 +1,64 @@
+module Primes = struct
+
+    type t = { prime: int; multiple: int }
+    
+    val make : int -> t
+    let make n = { prime = n; multiple = n }
+    
+    val release : t -> unit
+    let release t =
+        free t
+    
+    val next : t * int -> t * bool
+    let next t n =
+        let { t; ~prime; ~multiple } = t in
+        if multiple < n then
+            next { t with prime = prime; multiple = (multiple + prime) } n
+        else
+            { t with ~prime; ~multiple }, n = multiple
+
+    val make_buffer : unit -> t Buffer.t
+    let make_buffer () =
+        Buffer.make make release 1024
+    
+    val next_buffer : t Buffer.t * int -> t Buffer.t * bool
+    let next_buffer buffer n = 
+        let { buffer; Buffer.buf = buf; Buffer.last = last } = buffer in
+        let buf, divisible = next_loop buf n false 0 last in
+        let buffer = { buffer with Buffer.buf = buf; Buffer.last = last } in
+        if divisible then
+            buffer, false
+        else
+            let next_t = make n in
+            Buffer.add buffer next_t, true
+    
+    val private next_loop : t Array.t * int * bool * int * int -> t Array.t * bool
+    let next_loop t n divisible index last =
+        if index < last then
+            let dummy = make 0 in
+            let t, item = Array.swap t index dummy in
+            let item, ndiv = next item n in
+            let t, dummy = Array.swap t index item in
+            let () = release dummy in
+            next_loop t n (ndiv || divisible) (index + 1) last
+        else
+            t, divisible
+    
+    val primes_fold : int * (int * 'a -> 'a ) * 'a -> 'a
+    let primes_fold limit f acc =
+        let buf = make_buffer () in
+        primes_fold_loop buf f acc 3 limit
+    
+    val private primes_fold_loop : t Buffer.t * (int * 'a -> 'a) * 'a * int * int -> 'a
+    let primes_fold_loop buffer f acc pprime limit =
+        if pprime < limit then
+            let buffer, is_prime = next_buffer buffer pprime in
+            if is_prime then
+                primes_fold_loop buffer f (f pprime acc) (pprime + 2) limit
+            else
+                primes_fold_loop buffer f acc (pprime + 2) limit                    
+        else
+            let () = Buffer.release buffer in
+            acc
+end
+
