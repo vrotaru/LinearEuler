@@ -1,0 +1,29 @@
+module NumericPalindrome = struct
+            
+    val is_palindrome : int Array.t * int * int -> bool
+    let is_palindrome digits index rindex =
+        if index < rindex then
+            if digits.(index) = digits.(rindex) then
+                is_palindrome digits (index + 1) (rindex - 1)
+            else
+                let () = Array.irelease digits in 
+                false
+        else
+            let () = Array.irelease digits in 
+            true
+    
+    val max_palindrome : int * int * int -> int
+    let max_palindrome i j maxp =
+        let num = i * j in
+        let digits, len = Decimal.to_digits num in
+        if is_palindrome digits 0 (len - 1) then
+            if num > maxp then num else maxp
+        else
+            maxp
+    
+    val main : unit -> unit
+    let main () =
+        let maxp = Loops.for_ij 100 1000 100 1000 max_palindrome 0 in
+        Print.int maxp; Print.newline ()
+
+end

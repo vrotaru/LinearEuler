@@ -1,0 +1,16 @@
+module MaxDivisor = struct
+
+    val max_divisor : int * int -> int
+    let max_divisor pdiv maxd =
+        let mod = 600851475143 % pdiv in
+        if mod = 0 then
+            pdiv
+        else 
+            maxd
+    
+    val main : unit -> unit
+    let main () =
+        let max = Primes.primes_fold 775146 max_divisor 1 in
+        Print.int max; Print.newline ()
+
+end
