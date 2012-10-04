@@ -1,0 +1,30 @@
+module Decimal = struct
+    
+    val num_digits : int -> int
+    let num_digits n =
+        num_digits_loop n 1
+    
+    val private num_digits_loop : int * int -> int
+    let num_digits_loop n count =
+        if n < 10 then
+            count
+        else
+            num_digits_loop (n / 10) (count + 1)
+    
+    val to_digits : int -> int Array.t * int
+    let to_digits n =
+        let len = num_digits n in
+        let digits = Array.imake len 0 in
+        let digits = to_digits_loop digits n 0 len in
+        digits, len
+    
+    val private to_digits_loop : int Array.t * int * int * int -> int Array.t
+    let to_digits_loop digits n index len =
+        if index < len then
+            let digits = Array.set digits index (n % 10) in
+            to_digits_loop digits (n / 10) (index + 1) len
+        else
+            digits
+
+
+end

@@ -10,9 +10,14 @@ module Main = struct
     let sum_prime p sum =
         p + sum
     
+    val for_demo : int * int * unit -> unit
+    let for_demo i j () =
+        Print.int (i * 100 + j); Print.newline ()
+    
     val main : unit -> unit
     let main () =
         let () = Primes.primes_fold 10000 print_prime () in
+        let () = Loops.for_ij 5 8 1 3 for_demo () in
         let sum = Primes.primes_fold 10000 sum_prime 0 in
         Print.string " --->>> "; Print.int sum; Print.newline ()
 end

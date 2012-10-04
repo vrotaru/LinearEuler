@@ -1,0 +1,25 @@
+module Loops = struct
+
+    val for_i : int * int * (int * 'a -> 'a) * 'a -> 'a
+    let for_i i i_n f acc =
+        if i < i_n then
+            for_i (i + 1) i_n f (f i acc)
+        else 
+            acc
+    
+    val for_ij : int * int * int * int * (int * int * 'a -> 'a) * 'a -> 'a
+    let for_ij i i_n j j_n f acc =
+        for_ij_loop j  i i_n j j_n f acc
+    
+    val private for_ij_loop : int * int * int * int * int * (int * int * 'a -> 'a) * 'a -> 'a
+    let for_ij_loop j_0  i i_n j j_n f acc =
+        if i < i_n then
+            if j < j_n then
+                for_ij_loop j_0  i i_n (j + 1) j_n f (f i j acc)
+            else
+                for_ij_loop j_0  (i + 1) i_n j_0 j_n f acc
+        else
+            acc
+
+end
+
