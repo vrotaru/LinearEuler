@@ -19,7 +19,7 @@ module Primes = struct
 
     val make_buffer : unit -> t Buffer.t
     let make_buffer () =
-        Buffer.make make release 1024
+        Buffer.make make release (32 * 1024)               (* resizing the buffer segfaults *)
     
     val next_buffer : t Buffer.t * int -> t Buffer.t * bool
     let next_buffer buffer n = 
