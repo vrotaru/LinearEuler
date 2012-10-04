@@ -10,7 +10,7 @@ module MaxDivisor = struct
     
     val main : unit -> unit
     let main () =
-        let max = Primes.primes_fold 775146 max_divisor 1 in
+        let max = Primes.for_prime_to 10000 max_divisor 1 in
         Print.int max; Print.newline ()
 
 end

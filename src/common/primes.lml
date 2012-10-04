@@ -9,7 +9,7 @@ module Primes = struct
     let release t =
         free t
     
-    val next : t * int -> t * bool
+    val private next : t * int -> t * bool
     let next t n =
         let { t; ~prime; ~multiple } = t in
         if multiple < n then
@@ -17,11 +17,11 @@ module Primes = struct
         else
             { t with ~prime; ~multiple }, n = multiple
 
-    val make_buffer : unit -> t Buffer.t
+    val private make_buffer : unit -> t Buffer.t
     let make_buffer () =
         Buffer.make make release (32 * 1024)               (* resizing the buffer segfaults *)
     
-    val next_buffer : t Buffer.t * int -> t Buffer.t * bool
+    val private next_buffer : t Buffer.t * int -> t Buffer.t * bool
     let next_buffer buffer n = 
         let { buffer; Buffer.buf = buf; Buffer.last = last } = buffer in
         let buf, divisible = next_loop buf n false 0 last in
@@ -44,21 +44,30 @@ module Primes = struct
         else
             t, divisible
     
-    val primes_fold : int * (int * 'a -> 'a ) * 'a -> 'a
-    let primes_fold limit f acc =
+    val private iterate : int * (int * 'a -> 'a ) * 'a -> 'a
+    let iterate limit f acc =
         let buf = make_buffer () in
-        primes_fold_loop buf f acc 3 limit
+        iterate_loop buf f acc 3 limit
     
-    val private primes_fold_loop : t Buffer.t * (int * 'a -> 'a) * 'a * int * int -> 'a
-    let primes_fold_loop buffer f acc pprime limit =
-        if pprime < limit then
+    val private iterate_loop : t Buffer.t * (int * 'a -> 'a) * 'a * int * int -> 'a
+    let iterate_loop buffer f acc pprime limit =
+        if pprime <= limit then
             let buffer, is_prime = next_buffer buffer pprime in
             if is_prime then
-                primes_fold_loop buffer f (f pprime acc) (pprime + 2) limit
+                iterate_loop buffer f (f pprime acc) (pprime + 2) limit
             else
-                primes_fold_loop buffer f acc (pprime + 2) limit                    
+                iterate_loop buffer f acc (pprime + 2) limit
         else
             let () = Buffer.release buffer in
             acc
+    
+    val for_prime_to : int * (int * 'a -> 'a ) * 'a -> 'a
+    let for_prime_to limit f acc =
+        if limit >= 2 then
+            let acc = f 2 acc in
+            iterate limit f acc
+        else
+            acc
+    
 end
 
