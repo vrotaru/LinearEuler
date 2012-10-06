@@ -69,5 +69,26 @@ module Primes = struct
         else
             acc
     
+    val while_ : (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
+    let while_ testf accf acc =
+        if testf 2 !acc then
+            let buffer = make_buffer () in
+            while_loop buffer 3 testf accf (accf 2 acc)
+        else
+            acc
+    
+    val private while_loop : t Buffer.t * int * (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
+    let while_loop buffer pprime testf accf acc =
+        let buffer, is_prime = next_buffer buffer pprime in
+        if is_prime then
+            if testf pprime !acc then
+                while_loop buffer (pprime + 2) testf accf (accf pprime acc)
+            else
+                let () = Buffer.release buffer in
+                acc
+        else
+            while_loop buffer (pprime + 2) testf accf acc
+            
+    
 end
 
