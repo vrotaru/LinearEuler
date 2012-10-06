@@ -23,7 +23,7 @@ module NumericPalindrome = struct
     
     val main : unit -> unit
     let main () =
-        let maxp = Loops.for_ij 100 1000 100 1000 max_palindrome 0 in
+        let maxp = Loops.for_ij 100 999 100 999 max_palindrome 0 in
         Print.int maxp; Print.newline ()
 
 end

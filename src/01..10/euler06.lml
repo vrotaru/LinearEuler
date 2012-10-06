@@ -9,7 +9,7 @@ module DifferenceOfSums = struct
 
     val main : unit -> unit
     let main () =
-        let sum_t = Loops.for_i 1 101 add_t { x = 0; x2 = 0 } in
+        let sum_t = Loops.for_i 1 100 add_t { x = 0; x2 = 0 } in
         let { sum_t; ~x; ~x2 } = sum_t in
         let () = Print.int (x*x - x2); Print.newline () in
         free sum_t        
