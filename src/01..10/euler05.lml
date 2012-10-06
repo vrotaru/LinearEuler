@@ -1,0 +1,17 @@
+module SmallestMultiple = struct
+    
+    val main : unit -> unit
+    let main () =
+        let smallest = Primes.for_prime_to 20 make_product 1 in
+        Print.int smallest; Print.newline ()
+
+    val private make_product : int * int -> int
+    let make_product prime acc =
+        let multiple = multiple_to_20 prime prime in
+        multiple * acc
+    
+    val private multiple_to_20 : int * int -> int
+    let multiple_to_20 prime multiple =
+        if prime * multiple > 20 then multiple else multiple_to_20 prime (multiple * prime)
+
+end

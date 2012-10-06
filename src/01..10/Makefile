@@ -2,6 +2,12 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+differenceofsums.run: euler06.lml $(LIBEULER)
+	$(LIMLC) -root DifferenceOfSums -o $@ $^
+
+smallestmultiple.run: euler05.lml $(LIBEULER)
+	$(LIMLC) -root SmallestMultiple -o $@ $^
+
 numericpalindrome.run: euler04.lml $(LIBEULER)
 	$(LIMLC) -root NumericPalindrome -o $@ $^ 
 
