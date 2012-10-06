@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+consecutiveproducts.run: euler08.lml $(LIBEULER)
+	$(LIMLC) -root ConsecutiveProducts -o $@ $^
+
 prime10001.run: euler07.lml $(LIBEULER)
 	$(LIMLC) -root Prime10001 -o $@ $^
 
