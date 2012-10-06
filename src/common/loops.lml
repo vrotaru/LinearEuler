@@ -21,5 +21,16 @@ module Loops = struct
         else
             acc
 
+    val while_ : (int * 'a obs ->  bool) * (int * 'a -> 'a) * 'a -> 'a
+    let while_ testf accf acc =
+        while_loop 0 testf accf acc
+
+    val private while_loop : int * (int * 'a obs ->  bool) * (int * 'a -> 'a) * 'a -> 'a
+    let while_loop index testf accf acc =
+        if testf index !acc then
+            acc
+        else
+            while_loop (index + 1) testf accf (accf index acc)
+    
 end
 
