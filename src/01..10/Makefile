@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+prime10001.run: euler07.lml $(LIBEULER)
+	$(LIMLC) -root Prime10001 -o $@ $^
+
 differenceofsums.run: euler06.lml $(LIBEULER)
 	$(LIMLC) -root DifferenceOfSums -o $@ $^
 

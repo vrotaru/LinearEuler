@@ -1,0 +1,20 @@
+module Prime10001 = struct
+    
+    type t = { result: int; count: int }
+
+    val private test10001 : int * t obs -> bool
+    let test10001 prime t = t.count <= 10001
+    
+    val private accf : int * t -> t
+    let accf prime t = 
+        let { t; ~result; ~count } = t
+        in { t with result = prime; count = count + 1 }
+    
+    val main : unit -> unit
+    let main () =
+        let t = Primes.while_ test10001 accf { result = -1; count = 1 } in
+        let { t; ~result } = t in
+        let () = Print.int result; Print.newline () in
+        free t
+
+end
