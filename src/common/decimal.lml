@@ -15,14 +15,14 @@ module Decimal = struct
     let to_digits n =
         let len = num_digits n in
         let digits = Array.imake len 0 in
-        let digits = to_digits_loop digits n 0 len in
+        let digits = to_digits_loop digits n (len - 1) len in
         digits, len
     
     val private to_digits_loop : int Array.t * int * int * int -> int Array.t
     let to_digits_loop digits n index len =
-        if index < len then
+        if index >= 0 then
             let digits = Array.set digits index (n % 10) in
-            to_digits_loop digits (n / 10) (index + 1) len
+            to_digits_loop digits (n / 10) (index - 1) len
         else
             digits
 
