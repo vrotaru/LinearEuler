@@ -1,0 +1,18 @@
+module PythagoreanTriplet = struct
+
+    val main : unit -> unit
+    let main () =
+        Loops.for_ij 1 999 1 999 brute_force ()
+
+    val private brute_force : int * int * unit -> unit
+    let brute_force a b () =
+        let c = 1000 - a - b in
+        if a < b && b < c then
+            if a*a + b*b = c*c then
+                Print.int (a*b*c); Print.newline ()
+            else
+                ()
+        else
+            ()
+end
+

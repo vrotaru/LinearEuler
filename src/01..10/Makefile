@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+pythagoreantriple.run: euler09.lml $(LIBEULER)
+	$(LIMLC) -root PythagoreanTriplet -o $@ $^
+
 consecutiveproducts.run: euler08.lml $(LIBEULER)
 	$(LIMLC) -root ConsecutiveProducts -o $@ $^
 
