@@ -1,0 +1,40 @@
+(*
+The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+
+Find the sum of all the primes below two million.
+*)
+module SumOfPrimes = struct 
+
+    type t = { hi: int; lo: int }
+    
+    (* unfortunately it oveflows for ints, and goes astray for floats *)
+    val main : unit -> unit
+    let main () =
+        let sum = Primes.while_ testf add_prime { hi = 0; lo = 0 } in
+        let { sum; ~hi; ~lo } = sum in
+        Print.int hi; Print.int lo; Print.newline ();
+        free sum
+    
+    val private testf : int * t obs -> bool
+    let testf prime sum = 
+        prime < 2 * 1000 * 1000
+    
+    val private add_prime : int * t -> t
+    let add_prime prime sum =
+        let { sum; ~hi; ~lo } = sum in
+        let lo = lo + prime in
+        (* I'm assuming an 64 bit box *)
+        let mod = 1000 * 1000 * 1000 in
+        if lo > mod then
+            { sum with hi = hi + lo / mod; lo = lo % mod }
+        else
+            { sum with ~hi; ~lo }
+
+end
+
+(* result
+    int   : 1179908154
+    float : 142913830912.000000
+    t     : 142913828922
+
+*)

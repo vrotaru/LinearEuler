@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+sumofprimes.run: euler10.lml $(LIBEULER)
+	$(LIMLC) -root SumOfPrimes -o $@ $^
+
 pythagoreantriple.run: euler09.lml $(LIBEULER)
 	$(LIMLC) -root PythagoreanTriplet -o $@ $^
 
