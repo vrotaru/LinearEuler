@@ -1,55 +1,83 @@
 module Primes = struct
-
-    type t = { prime: int; multiple: int }
     
-    val make : int -> t
-    let make n = { prime = n; multiple = n }
+    val make : int -> int
+    let make n = n
     
-    val release : t -> unit
-    let release t =
-        free t
+    val release : int -> unit
+    let release n = ()
     
-    val private next : t * int -> t * bool
-    let next t n =
-        let { t; ~prime; ~multiple } = t in
-        if multiple < n then
-            next { t with prime = prime; multiple = (multiple + prime) } n
-        else
-            { t with ~prime; ~multiple }, n = multiple
-
-    val private make_buffer : unit -> t Buffer.t
+    val private make_buffer : unit -> int Buffer.t
     let make_buffer () =
         Buffer.make make release (64 * 1024)               (* resizing the buffer segfaults *)
     
-    val private next_buffer : t Buffer.t * int -> t Buffer.t * bool
+    val private next_buffer : int Buffer.t * int -> int Buffer.t * bool
     let next_buffer buffer n = 
-        let { buffer; Buffer.buf = buf; Buffer.last = last } = buffer in
-        let buf, divisible = next_loop buf n false 0 last in
-        let buffer = { buffer with Buffer.buf = buf; Buffer.last = last } in
+        let { buffer; Buffer.buf = buf } = buffer in
+        let buf, divisible = next_loop buf 0 n in
+        let buffer = { buffer with Buffer.buf = buf } in
         if divisible then
             buffer, false
         else
-            let next_t = make n in
-            Buffer.add buffer next_t, true
+            Buffer.add buffer n, true
     
-    val private next_loop : t Array.t * int * bool * int * int -> t Array.t * bool
-    let next_loop t n divisible index last =
-        if index < last then
-            let dummy = make 0 in
-            let t, item = Array.swap t index dummy in
-            let item, ndiv = next item n in
-            let t, dummy = Array.swap t index item in
-            let () = release dummy in
-            next_loop t n (ndiv || divisible) (index + 1) last
+    val private next_loop : int Array.t * int * int -> int Array.t * bool
+    let next_loop t index n =
+        let prime = t.(index) in
+        if n % prime = 0 then
+            t, true
         else
-            t, divisible
+            if prime * prime > n then
+                t, false
+            else
+                next_loop t (index + 1) n
+    
+    val for_prime_to : int * (int * 'a -> 'a ) * 'a -> 'a
+    let for_prime_to limit f acc =
+        if limit >= 2 then
+            let acc = f 2 acc in
+            if limit >= 3 then
+                let acc = f 3 acc in
+                if limit >= 5 then
+                    let buffer = make_buffer () in
+                    let buffer = Buffer.add buffer 5 in
+                    for_prime_skip2 buffer 7 limit f acc
+                else
+                    acc
+            else
+                acc
+        else
+            acc
+    
+    val private for_prime_skip2 : int Buffer.t * int * int * (int * 'a -> 'a ) * 'a -> 'a
+    let for_prime_skip2 buffer pprime limit f acc =
+        if pprime < limit then
+            let buffer, is_prime = next_buffer buffer pprime in
+            if is_prime then
+                for_prime_skip4 buffer (pprime + 4) limit f (f pprime acc)
+            else
+                for_prime_skip4 buffer (pprime + 4) limit f acc
+        else
+            let () = Buffer.release buffer in
+            acc
+    
+    val private for_prime_skip4 : int Buffer.t * int * int * (int * 'a -> 'a ) * 'a -> 'a
+    let for_prime_skip4 buffer pprime limit f acc =
+        if pprime < limit then
+            let buffer, is_prime = next_buffer buffer pprime in
+            if is_prime then
+                for_prime_skip2 buffer (pprime + 2) limit f (f pprime acc)
+            else
+                for_prime_skip2 buffer (pprime + 2) limit f acc
+        else
+            let () = Buffer.release buffer in
+            acc
     
     val private iterate : int * (int * 'a -> 'a ) * 'a -> 'a
     let iterate limit f acc =
         let buf = make_buffer () in
         iterate_loop buf f acc 3 limit
     
-    val private iterate_loop : t Buffer.t * (int * 'a -> 'a) * 'a * int * int -> 'a
+    val private iterate_loop : int Buffer.t * (int * 'a -> 'a) * 'a * int * int -> 'a
     let iterate_loop buffer f acc pprime limit =
         if pprime <= limit then
             let buffer, is_prime = next_buffer buffer pprime in
@@ -61,14 +89,6 @@ module Primes = struct
             let () = Buffer.release buffer in
             acc
     
-    val for_prime_to : int * (int * 'a -> 'a ) * 'a -> 'a
-    let for_prime_to limit f acc =
-        if limit >= 2 then
-            let acc = f 2 acc in
-            iterate limit f acc
-        else
-            acc
-    
     val while_ : (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
     let while_ testf accf acc =
         if testf 2 !acc then
@@ -78,7 +98,6 @@ module Primes = struct
                 if testf 5 !acc then
                     let acc = accf 5 acc in
                     let buffer = make_buffer () in
-                    let buffer = Buffer.add buffer (make 3) in
                     let buffer = Buffer.add buffer (make 5) in
                     while_skip2 buffer 7 testf accf acc
                 else
@@ -89,7 +108,7 @@ module Primes = struct
             acc
         
     
-    val private while_skip2 : t Buffer.t * int * (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
+    val private while_skip2 : int Buffer.t * int * (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
     let while_skip2 buffer pprime testf accf acc =
         let buffer, is_prime = next_buffer buffer pprime in
         if is_prime then
@@ -102,7 +121,7 @@ module Primes = struct
         else
            while_skip4 buffer (pprime + 4) testf accf acc 
     
-    val private while_skip4 : t Buffer.t * int * (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
+    val private while_skip4 : int Buffer.t * int * (int * 'a obs -> bool) * (int * 'a -> 'a) * 'a -> 'a
     let while_skip4 buffer pprime testf accf acc =
         let buffer, is_prime = next_buffer buffer pprime in
         if is_prime then
