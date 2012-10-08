@@ -26,5 +26,17 @@ module Decimal = struct
         else
             digits
 
+    val array_of_list : int List.t * int-> int Array.t
+    let array_of_list il size =
+        let buf = Array.imake size 0 in
+        array_of_list_loop il buf 0
+    
+    val private array_of_list_loop : int List.t * int Array.t * int -> int Array.t
+    let array_of_list_loop il ia index =
+        match il with
+        | [] -> ia
+        | x :: rl ->
+            let ia = Array.set ia index x in
+            array_of_list_loop rl ia (index + 1)
 
 end
