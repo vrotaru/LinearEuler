@@ -1,0 +1,38 @@
+module LongestChain = struct 
+
+    type t = { v : int; count: int }
+    
+    val testf : t obs -> bool
+    let testf t =
+        t.v <> 1
+    
+    val accf : t -> t
+    let accf t =
+        let { t; ~v; ~count } = t in
+        { t with v = if v % 2 = 0 then v / 2 else 3 * v + 1; count = count + 1 } 
+    
+    val chain_len : int -> int
+    let chain_len v =
+        let t = Loops.while_ testf accf { ~v; count = 1 } in
+        let { t; ~count } = t in
+        free t; count
+    
+    type chain = { vmax: int; max: int }
+        
+    val maxf : int * chain -> chain
+    let maxf i c =
+        let { c; ~vmax; ~max } = c in
+        let il = chain_len i in
+        if il > max then
+            { c with vmax = i; max = il }
+        else
+            { c with ~vmax; ~max }
+   
+    val main : unit -> unit
+    let main () =
+        let c = Loops.for_i 1 1000000 maxf { vmax = 1; max = 1 } in
+        let { c; ~vmax; ~max } = c in
+        Print.int vmax; Print.newline ();
+        free c
+
+end
