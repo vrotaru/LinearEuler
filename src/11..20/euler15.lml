@@ -1,0 +1,16 @@
+module CountPaths = struct
+
+    type rect =  { w: int; h: int }
+    type t = { count: int; rects: rect List.t }
+    
+    val private testf : t obs -> bool
+    let testf t =
+        match t.rects with
+        | [] -> false
+        | _ -> true
+    
+    val main : unit -> unit
+    let main () =
+        ()
+
+end
