@@ -1,0 +1,31 @@
+module Longs = struct
+
+    type t = { hi: int; lo: int }
+    
+    val make : int -> t
+    let make n = { hi = n / (mod_ ()); lo = n % (mod_ ()) }
+    
+    val release : t -> unit
+    let release t = free t
+    
+    val private mod_ : unit -> int
+    let mod_ () = 1000 * 1000 * 1000
+    
+    val add_int : t * int -> t
+    let add_int t n =
+        let { t; ~hi; ~lo } = t in
+        let temp, m = lo + n, mod_ () in
+        { t with hi = temp / m; lo = temp % m }
+    
+    val add : t * t -> t
+    let add t u =
+        let { t; ~hi; ~lo }, { u; hi = hi2; lo = lo2 } = t, u in
+        let temp_hi, temp_lo, m = hi + hi2, lo + lo2, mod_ () in
+        free u;
+        { t with hi = temp_hi + temp_lo / m; lo = temp_lo % m }
+
+    val print : t obs -> unit
+    let print t =
+        Print.int t.hi; Print.int t.lo
+end
+

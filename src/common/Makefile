@@ -6,7 +6,8 @@ LML_SOURCES =\
 	buffer.lml\
 	primes.lml\
 	decimal.lml\
-	loops.lml
+	loops.lml\
+	longs.lml
 
 libeuler.lmli: $(LML_SOURCES)
 	$(LIMLC) $(LML_SOURCES) -lib libeuler.lmli
