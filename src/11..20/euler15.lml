@@ -19,11 +19,6 @@ module CountPaths = struct
         if x < w && y < h then
             let countx = if x > 0 then places.(w * y + x - 1 ) else 0 in
             let county = if y > 0 then places.(w * (y - 1) + x) else 0 in
-            let () = 
-                Print.int x; Print.string " "; Print.int y;
-                Print.string " <- "; Print.int countx; Print.string " + "; Print.int county;
-                Print.newline ()
-            in
             let places = Array.set places (w * y + x) (countx + county) in
             { t with ~places; ~w; ~h}
         else
@@ -35,31 +30,14 @@ module CountPaths = struct
         
     val private update_step : int * t -> t
     let update_step i t =
-        let () = 
-            Print.string "step "; Print.int i; Print.newline ()
-        in
         let t = { t with step = i } in
         Loops.for_i 0 i update_step_aux t
-        
-    val print_aux : int * int * t -> t
-    let print_aux i j t =
-        let { t; ~places; ~w } = t in
-        let () = Print.int places.(w * i + j); Print.string " " in
-        let () = if j = w - 1 then Print.newline () else () in
-        { t with ~places; ~w }
-    
-    val print_ : t -> t
-    let print_ t =
-        let { t; ~w; ~h } = t in
-        Loops.for_ij 0 (h - 1) 0 (w - 1) print_aux { t with ~w; ~h }
       
     val count : int * int -> int
     let count w h =
         let t = make w h in
-        let t = print_ t in
         let () = Print.newline () in
         let t = Loops.for_i 1 (w + h) update_step t in
-        let t = print_ t in
         let { t; ~places } = t in
         let n = places.(w * (h - 1) +  w - 1) in        
         let () = Array.irelease places; free t in
@@ -67,7 +45,7 @@ module CountPaths = struct
     
     val main : unit -> unit
     let main () =
-        let n = count 7 7 in
+        let n = count 21 21 in
         Print.int n;
         Print.newline ()
 
