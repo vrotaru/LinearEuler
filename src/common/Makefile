@@ -14,10 +14,14 @@ libeuler.lmli: $(LML_SOURCES)
 
 ###############################################################################
 
-test: test.lml
-	$(LIMLC) -root Main -o test.run test.lml libeuler.lmli
+test.run: test.lml libeuler.lmli
+	$(LIMLC) -root Main -o $@ $^
 
 ###############################################################################
+
+overflow.run: test_overflow.lml
+	$(LIMLC) -root Main -o $@ $^
+
 
 clean: 
 	rm -f *~ libeuler.*

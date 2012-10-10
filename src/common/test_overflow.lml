@@ -1,0 +1,11 @@
+module Main = struct
+
+    val main : unit -> unit
+    let main () =
+        Print.string "1000 * 1000 * 1000 * 1    = "; Print.int (1000 * 1000 * 1000 * 1); Print.newline ();
+        Print.string "1000 * 1000 * 1000 * 10   = "; Print.int (1000 * 1000 * 1000 * 10); Print.newline ();
+        Print.string "1000 * 1000 * 1000 * 100  = "; Print.int (1000 * 1000 * 1000 * 100); Print.newline ();
+        Print.string "1000 * 1000 * 1000 * 1000 = "; Print.int (1000 * 1000 * 1000 * 1000); Print.newline ();
+        ()
+
+end
