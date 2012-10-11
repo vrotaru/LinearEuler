@@ -36,7 +36,6 @@ module CountPaths = struct
     val count : int * int -> int
     let count w h =
         let t = make w h in
-        let () = Print.newline () in
         let t = Loops.for_i 1 (w + h) update_step t in
         let { t; ~places } = t in
         let n = places.(w * (h - 1) +  w - 1) in        
