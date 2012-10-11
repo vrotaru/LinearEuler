@@ -1,0 +1,43 @@
+module SumOfDigits = struct
+
+    type t = { digits: int Array.t; len: int; cursor: int; carry: int }
+    
+    (* the i parameter is not used, but we need this signature for the loop *)
+    val private by_2 : int * t -> t
+    let by_2 i t  =
+        let { t; ~digits; ~len; ~cursor; ~carry } = t in
+        if cursor < len then
+            let temp = digits.(cursor) * 2 + carry in
+            let digits = Array.set digits cursor (temp % 10) in
+            by_2 i { t with ~digits; ~len; cursor = cursor + 1; carry = temp / 10 }
+        else            
+            if carry > 0 then
+                let digits =  Array.set digits cursor carry in
+                { t with ~digits; len = len + 1; cursor = 0; carry = 0 }
+            else
+                { t with ~digits; ~len; cursor = 0; carry = 0 }
+                
+    val private power_of_two : int -> t
+    let power_of_two k =
+        let digits = Array.imake k 0 in
+        let digits = Array.set digits 0 1 in
+        Loops.for_i 1 k by_2 { ~digits; len = 1; cursor = 0; carry = 0 }
+    
+    val private sum_of_digits : int Array.t * int * int * int -> int
+    let sum_of_digits digits i n acc =
+        if i < n then
+            sum_of_digits digits (i + 1) n (acc + digits.(i))
+        else
+            let () = Array.irelease digits in
+            acc
+    
+    val main : unit -> unit
+    let main () =
+        let t = power_of_two 1000 in
+        let { t; ~digits; ~len } = t in
+        let () = free t in
+        let n = sum_of_digits digits 0 len 0 in
+        Print.int n;
+        Print.newline ()
+
+end
