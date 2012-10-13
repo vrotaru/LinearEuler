@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+howmanyletters.run: euler17.lml $(LIBEULER)
+	$(LIMLC) -root HowManyLetters -o $@ $^
+
 sumofdigits.run: euler16.lml $(LIBEULER)
 	$(LIMLC) -root SumOfDigits -o $@ $^
 
