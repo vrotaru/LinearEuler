@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+maximalsum.run: euler18.lml $(LIBEULER)
+	$(LIMLC) -root MaximalSum -o $@ $^
+
 howmanyletters.run: euler17.lml $(LIBEULER)
 	$(LIMLC) -root HowManyLetters -o $@ $^
 

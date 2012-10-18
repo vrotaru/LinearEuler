@@ -1,0 +1,63 @@
+module MaximalSum = struct
+
+    val private input_data : unit -> int List.t
+    let input_data () = [
+         75; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00;
+        	95; 64; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00;
+        	17; 47; 82; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00;
+        	18; 35; 87; 10; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00;
+        	20; 04; 82; 47; 65; 00; 00; 00; 00; 00; 00; 00; 00; 00; 00;
+        	19; 01; 23; 75; 03; 34; 00; 00; 00; 00; 00; 00; 00; 00; 00;
+        	88; 02; 77; 73; 07; 63; 67; 00; 00; 00; 00; 00; 00; 00; 00;
+        	99; 65; 04; 28; 06; 16; 70; 92; 00; 00; 00; 00; 00; 00; 00;
+        	41; 41; 26; 56; 83; 40; 80; 70; 33; 00; 00; 00; 00; 00; 00;
+        	41; 48; 72; 33; 47; 32; 37; 16; 94; 29; 00; 00; 00; 00; 00;
+        	53; 71; 44; 65; 25; 43; 91; 52; 97; 51; 14; 00; 00; 00; 00;
+        	70; 11; 33; 28; 77; 73; 17; 78; 39; 68; 17; 57; 00; 00; 00;
+        	91; 71; 52; 38; 17; 14; 91; 43; 58; 50; 27; 29; 48; 00; 00;
+        	63; 66; 04; 68; 89; 53; 67; 30; 73; 16; 69; 87; 40; 31; 00;
+	04; 62; 98; 27; 23; 09; 70; 98; 73; 93; 38; 53; 60; 04; 23;
+    ]
+    
+    type t = { nums: int Array.t; sums: int Array.t; row: int }
+    
+    val private sumf : int * t -> t
+    let sumf column t =
+        let { t; ~nums; ~sums; ~row } = t in
+        let suma =
+            if column = 0 || row = 0 then 0 else sums.((row - 1) *15 + column - 1)
+        in
+        let sumb =
+            if row = 0 then 0 else sums.((row - 1) *15 + column)
+        in 
+        let current = nums.(row * 15 + column) in
+        let sum = current + if suma > sumb then suma else sumb in
+        let sums = Array.set sums (row * 15 + column) sum in
+        { t with ~nums; ~row; ~sums }
+    
+    val private rowf : int * t -> t
+    let rowf row t =
+        Loops.for_i 0 14 sumf { t with ~row }
+    
+    val private maxf : int * int * int * int Array.t obs * int -> int
+    let maxf offset i n sums acc =
+        if i < n then
+            let current = sums.(offset + i) in
+            let acc = if current > acc then current else acc in
+            maxf offset (i + 1) n sums acc
+        else
+            acc
+    
+    val main : unit -> unit
+    let main () =
+        let nums = Decimal.array_of_list (input_data ()) (15 * 15) in
+        let sums = Array.imake (15 * 15) 0 in
+        let t = { ~nums; ~sums; row = 0 } in
+        let t = Loops.for_i 0 14 rowf t in
+        let { t; ~nums; ~sums } = t in
+        let n = maxf (14 * 15) 0 15 !sums 0 in
+        Array.irelease nums; Array.irelease sums; free t;
+        Print.int n;
+        Print.newline ()
+
+end
