@@ -1,0 +1,46 @@
+module FactorialSumOfDigits = struct
+
+    (* Almost identical to the Euler 16 problem *)
+    type t = { digits: int Array.t; len: int; cursor: int; carry: int }
+    
+    val private init : unit -> t
+    let init () =
+        let digits = Array.imake 8000 0 in
+        let digits = Array.set digits 0 1 in
+        { ~digits; len = 1; cursor = 0; carry = 0 }
+    
+    (* Works only for m < 100 *)
+    val private multf : int * t -> t
+    let multf m t = 
+        let { t; ~digits; ~len; ~cursor; ~carry } = t in
+        if cursor < len then
+            let temp = digits.(cursor) * m + carry in
+            let digits = Array.set digits cursor (temp % 100) in
+            multf m { t with ~digits; ~len; cursor = cursor + 1; carry = temp / 100 }
+        else  
+            if carry > 0 then
+                let digits =  Array.set digits cursor carry in
+                { t with ~digits; len = len + 1; cursor = 0; carry = 0 }
+            else
+                { t with ~digits; ~len; cursor = 0; carry = 0 }  
+    
+    val private sum_of_digits : int Array.t * int * int * int -> int
+    let sum_of_digits digits i n acc =
+        if i < n then
+            let ni = digits.(i) in
+            sum_of_digits digits (i + 1) n (acc + ni % 10 + ni / 10)
+        else
+            let () = Array.irelease digits in
+            acc
+
+    val main : unit -> unit
+    let main () =
+        let t = init () in
+        let t = Loops.for_i 2 100 multf t in
+        let { t; ~digits; ~len } = t in
+        let n = sum_of_digits digits 0 len 0 in
+        free t; 
+        Print.int n;
+        Print.newline ()
+
+end

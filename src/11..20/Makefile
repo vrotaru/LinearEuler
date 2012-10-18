@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+factorialsumofdigits.run: euler20.lml $(LIBEULER)
+	$(LIMLC) -root FactorialSumOfDigits -o $@ $^
+
 numsundays.run: euler19.lml $(LIBEULER)
 	$(LIMLC) -root NumSundays -o $@ $^
 
