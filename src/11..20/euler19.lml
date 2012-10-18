@@ -1,0 +1,46 @@
+module NumSundays = struct
+
+    type t = { year: int; day: int; month: int; n: int }
+    
+    val private days_of_month : int * int -> int
+    let days_of_month month year =
+        if      month = 1  then 31
+        else if month = 2  then
+            if      year % 400 = 0 then 29
+            else if year % 100 = 0 then 28
+            else if year % 4 = 0   then 29
+            else                        28
+        else if month = 3  then 31
+        else if month = 4  then 30
+        else if month = 5  then 31
+        else if month = 6  then 30
+        else if month = 7  then 31
+        else if month = 8  then 31
+        else if month = 9  then 30
+        else if month = 10 then 31
+        else if month = 11 then 30
+        else if month = 12 then 31
+        else                    -1
+
+    val private testf : t obs -> bool
+    let testf t =
+        t.year <= 2000
+    
+    val private stepf : t -> t
+    let stepf t =
+        let { t; ~year; ~day; ~month; ~n } = t in
+        let month_days = days_of_month month year in
+        let day = day + 7 in
+        let day, month = if day > month_days then day - month_days, month + 1 else day, month in
+        let year, month = if month > 12 then year + 1, 1 else year, month in
+        let n = if day = 1 then n + 1 else n in
+        { t with ~year; ~day; ~month; ~n }
+    
+    val main : unit -> unit
+    let main () =
+        let t = Loops.while_ testf stepf { year = 1901; day = 6; month = 1; n = 0 } in
+        let { t; ~n } = t in
+        let () = Print.int n; Print.newline () in
+        free t
+
+end

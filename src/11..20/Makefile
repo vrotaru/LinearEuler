@@ -2,6 +2,9 @@
 
 LIBEULER = ../common/libeuler.lmli
 
+numsundays.run: euler19.lml $(LIBEULER)
+	$(LIMLC) -root NumSundays -o $@ $^
+
 maximalsum.run: euler18.lml $(LIBEULER)
 	$(LIMLC) -root MaximalSum -o $@ $^
 
