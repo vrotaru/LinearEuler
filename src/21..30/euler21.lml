@@ -1,0 +1,54 @@
+module Divisors = struct
+
+    type t = { num: int; div: int; power: int; psum: int; divsum: int }
+    
+    val private testf :  t obs -> bool
+    let testf t = t.div <= t.num
+    
+    val private accf : t -> t
+    let accf t =
+        let { t; ~num; ~div; ~power; ~psum; ~divsum } = t in
+        if num % div = 0 then
+            let power = power * div in
+            let psum = psum + power in
+            accf { t with num = num / div; ~div; ~power; ~psum; ~divsum }
+        else
+            let divsum = divsum * psum in
+            let div = if div = 2 then  3 else div + 2 in
+            { t with ~num; ~div; power = 1; psum = 1; ~divsum }
+    
+    val sum_of_divisors : int -> int
+    let sum_of_divisors num =
+        let t = Loops.while_ testf accf { ~num; div = 2; power = 1; psum = 1; divsum = 1 } in
+        let { t; ~divsum } = t in
+        free t;
+        divsum
+    
+end
+
+
+module AmicableSum = struct
+
+    val private is_amicable : int -> bool
+    let is_amicable x = 
+        let amico = (Divisors.sum_of_divisors x) - x in
+        if amico = x then (* perfect number *)
+            false
+        else
+            let y = (Divisors.sum_of_divisors amico) - amico in
+            x = y
+        
+    val private accf : int * int -> int
+    let accf x sum =
+        if is_amicable x then
+            sum + x
+        else
+            sum
+
+    val main : unit -> unit
+    let main () =
+        let n = Loops.for_i 2 10000 accf 0 in 
+        Print.int n;
+        Print.newline ()
+
+end
