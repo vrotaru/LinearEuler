@@ -13,11 +13,27 @@ module Main = struct
     val for_demo : int * int * unit -> unit
     let for_demo i j () =
         Print.int (i * 100 + j); Print.newline ()
+        
+    val files_demo : unit -> unit
+    let files_demo () =
+        let rs = Files.read "test.lml" in
+        Print.rstring !rs; Print.newline ();
+        String.release rs
+        
+    val option_demo : int Option.t -> unit
+    let option_demo o =
+        let () = Array.debug !o; Print.newline () in
+        match o with
+        | Option.None -> ()
+        | Option.Some _ -> ()
     
     val main : unit -> unit
     let main () =
         let () = Primes.for_prime_to 10000 print_prime () in
         let () = Loops.for_ij 5 8 1 3 for_demo () in
         let sum = Primes.for_prime_to 10000 sum_prime 0 in
-        Print.string " --->>> "; Print.int sum; Print.newline ()
+        Print.string " --->>> "; Print.int sum; Print.newline ();
+        files_demo ();
+        option_demo (Option.None);
+        option_demo (Option.Some 42)
 end

@@ -1,0 +1,47 @@
+module Chunk = struct
+
+    type t = { buf: String.t Share.t; sta: int; len: int }
+    
+    val private c_string_char : String.t obs * int #-> char = "string_char"
+    val private c_string_find : String.t obs * int * char #-> int = "string_find"
+    
+    val make : String.t -> t
+    let make rs =
+        let len = String.length !rs in 
+        { buf = Share.make rs; sta = 0; ~len }
+    
+    val release : t -> String.t Option.t
+    let release t =
+        let { t; ~buf } = t in
+        free t;
+        Share.release buf
+    
+    val char: t obs * int -> char
+    let char t i =
+        if i < 0 || i >= t.len then
+            ' '
+        else
+            let rs = Share.visit t.buf in
+            c_string_char rs (t.sta + i)
+        
+    
+    val split_at: t * int -> t * t
+    let split_at t x =
+        let { t; ~buf; ~sta; ~len } = t in
+        let buf_clone = Share.clone !buf in
+        { t with ~buf; ~sta; len = x }, 
+        { buf = buf_clone; sta = sta + x; len = len - x }
+    
+    val print_char_ : int * t -> t
+    let print_char_ i t = 
+        let { t; ~buf; ~sta; ~len } = t in
+        let rs = Share.visit !buf in
+        let () = Print.char (c_string_char rs (sta + i)) in
+        { t with ~buf; ~sta; ~len }
+    
+    val print_ : t -> t
+    let print_ t =
+        let { t; ~len } = t in
+        Loops.for_i 0 (len - 1) print_char_ { t with ~len }
+
+end

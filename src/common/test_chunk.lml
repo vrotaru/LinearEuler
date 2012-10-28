@@ -1,0 +1,13 @@
+module Main = struct
+
+    val main : unit -> unit
+    let main () = 
+        let rs = Files.read "test_chunk.lml" in
+        let chunk = Chunk.make rs in
+        let chunk = Chunk.print_ { chunk with Chunk.sta = 7; Chunk.len = 110 } in
+        let ors = Chunk.release chunk in
+        match ors with
+        | Option.None -> ()
+        | Option.Some rs -> String.release rs
+
+end
