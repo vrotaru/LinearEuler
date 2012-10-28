@@ -1,0 +1,8 @@
+module Files = struct
+
+    val c_read : string #-> String.t = "files_read"
+    
+    val read : string -> String.t
+    let read filename = c_read filename
+
+end
