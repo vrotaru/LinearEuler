@@ -48,4 +48,4 @@ chunk.run: test_chunk.lml libeuler.lmli
 ##############################################################################
 
 clean: 
-	rm -f *~ libeuler.*
+	rm -f *~ *.o libeuler.*
