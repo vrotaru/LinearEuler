@@ -10,12 +10,14 @@ module Chunk = struct
         let len = String.length !rs in 
         { buf = Share.make rs; sta = 0; ~len }
     
-    val release : t -> String.t Option.t
+    val release : t -> unit
     let release t =
         let { t; ~buf } = t in
-        free t;
-        Share.release buf
-    
+        let ors = Share.release buf in
+        match ors with
+        | Option.None    -> free t
+        | Option.Some rs -> free t; String.release rs
+   
     val char: t obs * int -> char
     let char t i =
         if i < 0 || i >= t.len then
@@ -32,16 +34,14 @@ module Chunk = struct
         { t with ~buf; ~sta; len = x }, 
         { buf = buf_clone; sta = sta + x; len = len - x }
     
-    val print_char_ : int * t -> t
+    val private print_char_ : int * t -> t
     let print_char_ i t = 
-        let { t; ~buf; ~sta; ~len } = t in
-        let rs = Share.visit !buf in
-        let () = Print.char (c_string_char rs (sta + i)) in
-        { t with ~buf; ~sta; ~len }
+        let { t; ~buf } = t in
+        let () = Print.char (c_string_char (Share.visit !buf) (t.sta + i)) in
+        { t with ~buf }
     
     val print_ : t -> t
     let print_ t =
-        let { t; ~len } = t in
-        Loops.for_i 0 (len - 1) print_char_ { t with ~len }
+        Loops.for_i 0 (t.len - 1) print_char_ t
 
 end

@@ -3,11 +3,10 @@ module Main = struct
     val main : unit -> unit
     let main () = 
         let rs = Files.read "test_chunk.lml" in
-        let chunk = Chunk.make rs in
-        let chunk = Chunk.print_ { chunk with Chunk.sta = 7; Chunk.len = 110 } in
-        let ors = Chunk.release chunk in
-        match ors with
-        | Option.None -> ()
-        | Option.Some rs -> String.release rs
-
+        let chunk = Chunk.print_ (Chunk.make rs) in
+        let ch1, ch2 = Chunk.split_at chunk 117 in
+        Print.string "\nch2:\n";
+        Chunk.release (Chunk.print_ ch2);
+        Print.string "\nch1:\n";
+        Chunk.release (Chunk.print_ ch1)
 end
