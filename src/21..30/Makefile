@@ -2,6 +2,8 @@
 
 LIBEULER = ../common/libeuler.lmli
 
-amicablesum.run: euler21.lml $(LIBEULER)
+euler21.run: euler21.lml $(LIBEULER)
 	$(LIMLC) -root AmicableSum -o $@ $^
 
+clean:
+	rm -f *.run

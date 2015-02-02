@@ -2,32 +2,35 @@
 
 LIBEULER = ../common/libeuler.lmli
 
-factorialsumofdigits.run: euler20.lml $(LIBEULER)
+euler20.run: euler20.lml $(LIBEULER)
 	$(LIMLC) -root FactorialSumOfDigits -o $@ $^
 
-numsundays.run: euler19.lml $(LIBEULER)
+euler19.run: euler19.lml $(LIBEULER)
 	$(LIMLC) -root NumSundays -o $@ $^
 
-maximalsum.run: euler18.lml $(LIBEULER)
+euler18.run: euler18.lml $(LIBEULER)
 	$(LIMLC) -root MaximalSum -o $@ $^
 
-howmanyletters.run: euler17.lml $(LIBEULER)
+euler17.run: euler17.lml $(LIBEULER)
 	$(LIMLC) -root HowManyLetters -o $@ $^
 
-sumofdigits.run: euler16.lml $(LIBEULER)
+euler16.run: euler16.lml $(LIBEULER)
 	$(LIMLC) -root SumOfDigits -o $@ $^
 
-countpaths.run: euler15.lml $(LIBEULER)
+euler15.run: euler15.lml $(LIBEULER)
 	$(LIMLC) -root CountPaths -o $@ $^
 
-longestchain.run: euler14.lml $(LIBEULER)
+euler14.run: euler14.lml $(LIBEULER)
 	$(LIMLC) -root LongestChain -o $@ $^
 
-firsttendigits.run: euler13.lml $(LIBEULER)
+euler13.run: euler13.lml $(LIBEULER)
 	$(LIMLC) -root FirstTenDigits -o $@ $^
 
-trianglenumberdivisors.run: euler12.lml $(LIBEULER)
+euler12.run: euler12.lml $(LIBEULER)
 	$(LIMLC) -root TriangleNumberDivisors -o $@ $^
 
-gridadjacent.run: euler11.lml $(LIBEULER)
+euler11.run: euler11.lml $(LIBEULER)
 	$(LIMLC) -root GridAdjacent -o $@ $^
+
+clean:
+	rm -f *.run
