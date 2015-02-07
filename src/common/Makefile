@@ -14,7 +14,8 @@ LML_SOURCES =\
 	decimal.lml\
 	loops.lml\
 	files.lml\
-	chunk.lml
+	chunk.lml\
+	heapsort.lml
 
 OBJECTS = $(C_SOURCES:.c=.o)
 

@@ -1,0 +1,51 @@
+module HeapSort = struct
+			
+	val private exch : int Array.t * int * int -> int Array.t
+	let exch arr i j =
+		let ei = arr.(i - 1) in
+		let ej = arr.(j - 1) in
+		let arr = Array.set arr (i - 1) ej in
+		let arr = Array.set arr (j - 1) ei in
+		arr
+		
+	val private less : int Array.t obs * int * int -> bool
+	let less arr i j =
+		arr.(i - 1) < arr.(j - 1)
+		
+	val private sink : int Array.t * int * int -> int Array.t
+	let sink arr k n =
+		if 2 * k > n then
+			arr
+		else
+			let j = 2 * k in
+			let j = if j < n && less !arr j (j + 1) then j + 1 else j in
+			if less !arr k j = false then
+				arr
+			else
+				let arr = exch arr k j in
+				sink arr j n
+			
+	val isort : int Array.t -> int Array.t
+	let isort arr = 
+		let n = Array.length !arr in
+		let arr = sink_loop arr (n / 2) n in
+		exch_loop arr n
+	
+	val private exch_loop : int Array.t * int -> int Array.t
+	let exch_loop arr n =
+		if n > 1 then
+			let arr = exch arr 1 n in
+			let arr = sink arr 1 (n - 1) in
+			exch_loop arr (n - 1)
+		else
+			arr
+		
+	val private sink_loop : int Array.t * int * int -> int Array.t
+	let sink_loop arr k n =
+		if k > 0 then
+			let arr = sink arr k n in
+			sink_loop arr (k - 1) n
+		else
+			arr
+		
+end
